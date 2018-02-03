@@ -4,31 +4,34 @@ import {
   Modal,
   Text,
   TextInput,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native'
 
-const Settingmodal = ({ modalVisible, closeModal, changePassword, handleChange, oldPassword, newPassword, confirmNewPassword }) => {
+const Settingmodal = ({ modalVisible, closeModal, changePassword, handleChange, oldPassword, newPassword, confirmNewPassword, message }) => {
   return(
     <Modal
     visible={ modalVisible }
     animationType={'slide'}
     onRequestClose={() => closeModal()}
     >
-      <View>
+
         <View>
-          <Text>This is content inside of modal component</Text>
-          <TextInput value={oldPassword} onChangeText={(text) => handleChange("oldPassword", text)} />
-          <TextInput value={newPassword} onChangeText={(text) => handleChange("newPassword", text)} />
-          <TextInput value={confirmNewPassword} onChangeText={(text) => handleChange("confirmNewPassword", text)} />
-          <Button
-            onPress={() => {
+          <View style={{ backgroundColor: "black", marginBottom: 15, height: 46, paddingLeft: 5, justifyContent: "center"  }}>
+            <Text style={{ color: "white" }}>Change Password</Text>
+          </View>
+          <TextInput secureTextEntry={true} placeholder="Old Password" value={oldPassword} onChangeText={(text) => handleChange("oldPassword", text)} />
+          <TextInput secureTextEntry={true} placeholder="New Password" value={newPassword} onChangeText={(text) => handleChange("newPassword", text)} />
+          <TextInput secureTextEntry={true} placeholder="Confirm New Password" value={confirmNewPassword} onChangeText={(text) => handleChange("confirmNewPassword", text)} />
+          <Text>{message}</Text>
+          <View style={{ alignItems: "center" }}>
+          <TouchableOpacity style={{justifyContent:"center", height:30, width: 300, backgroundColor: "black" }} onPress={() => {
               changePassword()
-              closeModal()
-            }}
-            title="Close modal"
-          />
-        </View>
-      </View>        
+            }}>
+            <Text style={{ color: "white", textAlign:"center"}}>Change Password</Text>
+          </TouchableOpacity>  
+          </View>        
+        </View>     
     </Modal>    
   )
 }

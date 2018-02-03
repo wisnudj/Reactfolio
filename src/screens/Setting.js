@@ -3,11 +3,13 @@ import {
   Button,
   Modal,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native'
 import { connect } from 'react-redux'
 import UserModel from '../model/UserModel'
 import { realm } from '../model/UserModel'
+import Header from '../components/Header'
 
 const Realm = require('realm');
 
@@ -22,7 +24,8 @@ class Setting extends Component {
       modalVisible: false,
       oldPassword: '',
       newPassword: '',
-      confirmNewPassword: ''
+      confirmNewPassword: '',
+      message: ''
     }
 
     this.closeModal = this.closeModal.bind(this)
@@ -41,16 +44,26 @@ class Setting extends Component {
   changePassword() {
     const { oldPassword, newPassword, confirmNewPassword } = this.state
 
-    if(oldPassword === this.props.password && newPassword == confirmNewPassword) {
-      realm.write(() => {
-        const users = realm.objects('Users')
-        users.forEach((user) => {
-          if(user.id == this.props.id) {
-            user.password = this.state.newPassword
-          }
+    if(oldPassword && newPassword && confirmNewPassword) {
+      if(oldPassword === this.props.password && newPassword == confirmNewPassword) {
+        realm.write(() => {
+          const users = realm.objects('Users')
+          users.forEach((user) => {
+            if(user.id == this.props.id) {
+              user.password = this.state.newPassword
+            }
+          })
         })
-      })
+        this.closeModal()
+      } else if(oldPassword != this.props.password) {
+        this.setState({ message: "password salah" })
+      } else if(newPassword != confirmNewPassword) {
+        this.setState({ message: "new and confirm password tidak sama" })
+      }     
+    } else {
+      this.setState({ message: "tidak boleh kosong" })
     }
+
   }
 
   handleChange(name, value) {
@@ -66,8 +79,9 @@ class Setting extends Component {
   render() {
     return(
       <View>
-        <Text>Ini Setting</Text>
-        <Settingmodal 
+        <Header showDrawer={this.props.navigation.navigate} />
+        <Settingmodal      
+         message={this.state.message}
          modalVisible={this.state.modalVisible} 
          closeModal={this.closeModal} 
          changePassword={this.changePassword}
@@ -75,9 +89,9 @@ class Setting extends Component {
          oldPassword={this.state.oldPassword}
          newPassword={this.state.newPassword}
          confirmNewPassword={this.state.confirmNewPassword} />
-        <Button
-         onPress={() => this.openModal()}
-         title="Open modal" />
+         <TouchableOpacity style={{ marginTop: 10, borderBottomWidth: 0.5, borderBottomColor: "#d6d7da", justifyContent: "center" }} onPress={() => this.openModal()}>
+           <Text style={{ justifyContent: 'center', height: 38 }}>Change Password</Text>
+         </TouchableOpacity>
       </View>
     )
   }

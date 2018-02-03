@@ -65,7 +65,8 @@ class Register extends Component {
           placeholderTextColor="black"
           value={this.state.username}
           />
-          <TextInput 
+          <TextInput
+          secureTextEntry={true}
           underlineColorAndroid={'transparent'}
           onChangeText={ (text) => this.setState({ password: text }) }
           placeholder="Password"

@@ -13,6 +13,8 @@ import CoinModel from '../model/CoinModel'
 import UserModel from '../model/UserModel'
 import { guid } from '../guid'
 import { realm } from '../model/UserModel'
+import Header from '../components/Header'
+
 
 const Realm = require('realm');
 
@@ -68,7 +70,7 @@ class Rates extends Component {
         <Text style={{ textAlign: "center" }}>{item.name}</Text>
       </View>
       <View style={{ justifyContent: 'center', height: 32, width: "25%" }}>
-        <Text style={{ textAlign: "center" }}>{item.price_usd}</Text>
+        <Text style={{ textAlign: "center" }}>$ {item.price_usd}</Text>
       </View>
       <View style={{ justifyContent: 'center', height: 32, width: "25%" }}>
         <Text style={{ textAlign: "center" }}>{item.percent_change_24h}%</Text>
@@ -139,6 +141,7 @@ class Rates extends Component {
   render() {
     return(
       <View>
+        <Header showDrawer={this.props.navigation.navigate} />
         <HeaderTableRates />
         <AddTransactionModal 
          modalVisible={this.state.modalVisible}

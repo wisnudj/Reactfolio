@@ -15,6 +15,7 @@ import { fetchTopRates } from '../actions/CoinAction'
 import { fetchUserCoin } from '../actions/CoinAction'
 import { refreshUserCoin } from '../actions/CoinAction'
 import AddTransactionModal from '../components/AddTransactionModal'
+import Header from '../components/Header'
 
 
 class Holding extends Component {
@@ -49,19 +50,19 @@ class Holding extends Component {
 
   renderBodyTable = ({item}) => (
     <TouchableOpacity onPress={() => this.setState({ modalVisible: true, coin: item.dataCoin })} style={{marginTop: 10, borderBottomWidth: 0.5, borderBottomColor: "#d6d7da", flexDirection: 'row', justifyContent: "center" }}>
-      <View style={{ justifyContent: 'center', height: 32, width: "15%" }}>
-        <Text style={{ textAlign: "center" }}>{item.symbol}</Text>
+      <View style={{ justifyContent: 'center', height: 38, width: "15%" }}>
+        <Text style={{ textAlign: "center", color: "black" }}>{item.symbol}</Text>
       </View>
-      <View style={{ justifyContent: 'center', height: 32, width: "35%" }}>
-        <Text style={{ textAlign: "center" }}>{item.name}</Text>
+      <View style={{ justifyContent: 'center', height: 38, width: "35%" }}>
+        <Text style={{ textAlign: "center", color: "black" }}>{item.name}</Text>
       </View>
-      <View style={{ justifyContent: 'center', height: 32, width: "25%" }}>
-        <Text style={{ textAlign: "center" }}>{item.quantity}</Text>
-        <Text style={{ textAlign: "center" }}>${(item.quantity * item.dataCoin.price_usd).toFixed(0)}</Text>
+      <View style={{ justifyContent: 'center', height: 38, width: "25%" }}>
+        <Text style={{ textAlign: "center", color: "black" }}>{item.quantity}</Text>
+        <Text style={{ textAlign: "center", color: "black" }}>${(item.quantity * item.dataCoin.price_usd).toFixed(0)}</Text>
       </View>
-      <View style={{ justifyContent: 'center', height: 32, width: "25%" }}>
-        <Text style={{ textAlign: "center" }}>${item.dataCoin.price_usd}</Text>
-        <Text style={{ textAlign: "center" }}>{item.dataCoin.percent_change_24h}</Text>
+      <View style={{ justifyContent: 'center', height: 38, width: "25%" }}>
+        <Text style={{ textAlign: "center", color: "black" }}>${item.dataCoin.price_usd}</Text>
+        <Text style={{ textAlign: "center", color: "black" }}>{item.dataCoin.percent_change_24h}</Text>
       </View>
     </TouchableOpacity>
   )
@@ -145,7 +146,9 @@ class Holding extends Component {
   render() {
     return(
       <View>
-        <Text>${this.state.totalPriceHolding}</Text>
+        <Header showDrawer={this.props.navigation.navigate} />
+        <Text style={{ marginTop: 5 }}>Total value</Text>
+        <Text style={{ color: "black", fontSize: 28, marginTop: 10 }}>$ {(this.state.totalPriceHolding).toFixed(2)}</Text>
         <HeaderTableHolding />
         <AddTransactionModal 
          modalVisible={this.state.modalVisible}
