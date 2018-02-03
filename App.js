@@ -3,7 +3,6 @@ import Container from './src/Container';
 import { Provider } from 'react-redux'
 import store from './src/Store'
 
-
 class App extends Component<{}> {
   render() {
     return(

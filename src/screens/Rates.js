@@ -1,29 +1,30 @@
 import React, { Component } from 'react'
 import {
-  Button,
+  ActivityIndicator,
   FlatList,
   Text,
-  TouchableOpacity,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native'
-
-import { realm } from '../model/UserModel'
-import HeaderTableHolding from '../components/HeaderTableHolding'
-import { getUserCoin } from '../actions/CoinAction'
 import { connect } from 'react-redux'
 import { fetchTopRates } from '../actions/CoinAction'
-import { fetchUserCoin } from '../actions/CoinAction'
-import { refreshUserCoin } from '../actions/CoinAction'
 import AddTransactionModal from '../components/AddTransactionModal'
+import CoinModel from '../model/CoinModel'
+import UserModel from '../model/UserModel'
+import { guid } from '../guid'
+import { realm } from '../model/UserModel'
 
+const Realm = require('realm');
 
-class Holding extends Component {
+//component
+import HeaderTableRates from '../components/HeaderTableRates'
+
+class Rates extends Component {
 
   constructor() {
     super()
 
     this.state = {
-      totalPriceHolding: 0,
       isLoading: false,
       modalVisible: false,
       transactionStatus: 'buy',
@@ -36,19 +37,30 @@ class Holding extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.saveTransaction = this.saveTransaction.bind(this)
     this.close = this.close.bind(this)
-  }  
+  }
 
   componentDidMount() {
-    this.props.fetchUserCoin(this.props.topCoin, this.props.idUser)
+    this.props.fetchTopRates()
   }
 
   componentWillReceiveProps(nextProps) {
-    this.countTotalPriceHolding(nextProps.dataUserCoin)
     this.setState({ isLoading: false })
   }
 
+  emptyListComponent() {
+    return (
+      <View style={{ justifyContent:"center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
+  handleChange(price, quantity) {
+    this.setState({quantityCoin: quantity, totalPrice: price * quantity})
+  }
+
   renderBodyTable = ({item}) => (
-    <TouchableOpacity onPress={() => this.setState({ modalVisible: true, coin: item.dataCoin })} style={{marginTop: 10, borderBottomWidth: 0.5, borderBottomColor: "#d6d7da", flexDirection: 'row', justifyContent: "center" }}>
+    <TouchableOpacity onPress={() => this.setState({ modalVisible: true, coin: item })} style={{ borderBottomWidth: 0.5, borderBottomColor: "#d6d7da", flexDirection: 'row', justifyContent: "center" }}>
       <View style={{ justifyContent: 'center', height: 32, width: "15%" }}>
         <Text style={{ textAlign: "center" }}>{item.symbol}</Text>
       </View>
@@ -56,12 +68,10 @@ class Holding extends Component {
         <Text style={{ textAlign: "center" }}>{item.name}</Text>
       </View>
       <View style={{ justifyContent: 'center', height: 32, width: "25%" }}>
-        <Text style={{ textAlign: "center" }}>{item.quantity}</Text>
-        <Text style={{ textAlign: "center" }}>${(item.quantity * item.dataCoin.price_usd).toFixed(0)}</Text>
+        <Text style={{ textAlign: "center" }}>{item.price_usd}</Text>
       </View>
       <View style={{ justifyContent: 'center', height: 32, width: "25%" }}>
-        <Text style={{ textAlign: "center" }}>${item.dataCoin.price_usd}</Text>
-        <Text style={{ textAlign: "center" }}>{item.dataCoin.percent_change_24h}</Text>
+        <Text style={{ textAlign: "center" }}>{item.percent_change_24h}%</Text>
       </View>
     </TouchableOpacity>
   )
@@ -72,25 +82,17 @@ class Holding extends Component {
     )
   }
 
-  countTotalPriceHolding(dataUserCoin) {
-
-    var totalPriceHolding = 0
-
-    for(var i = 0; i < dataUserCoin.length; i++) {
-      totalPriceHolding = totalPriceHolding + (dataUserCoin[i].quantity * dataUserCoin[i].dataCoin.price_usd)
-    }
-
-    this.setState({ totalPriceHolding: totalPriceHolding })
+  onRefresh() {
+    this.setState({ isLoading: true })
+    this.props.fetchTopRates()
   }
-
-  keyExtractor = (item, index) => item.id
 
   changeTransactionStatus(value) {
     this.setState({ transactionStatus: value })
   }
 
-  handleChange(price, quantity) {
-    this.setState({quantityCoin: quantity, totalPrice: price * quantity})
+  close() {
+    this.setState({ modalVisible: false })
   }
 
   saveTransaction(nameCoin, symbolCoin) {
@@ -101,7 +103,6 @@ class Holding extends Component {
       if(checkTransaction) {
         realm.write(() => {
           checkTransaction.quantity = (Number(checkTransaction.quantity) + Number(this.state.quantityCoin)).toString()
-          this.props.refreshUserCoin(this.props.idUser)
         })
       } else {
         realm.write(() => {
@@ -118,35 +119,27 @@ class Holding extends Component {
       if(checkTransaction) {
         realm.write(() => {
           checkTransaction.quantity = (Number(checkTransaction.quantity) - Number(this.state.quantityCoin)).toString()
-          this.props.refreshUserCoin(this.props.idUser)
         })
       }
     }
+
+      // realm.write(() => {
+      //   realm.create('Duit', { 
+      //     id: guid(),
+      //     idUser: this.props.idUser,
+      //     name:  nameCoin,
+      //     symbol: symbolCoin,
+      //     quantity: this.state.quantityCoin
+      //   })
+      // })    
   }
 
-  close() {
-    this.setState({ modalVisible: false })
-  }
-
-  emptyListComponent() {
-    return (
-      <View style={{ justifyContent:"center", alignItems: "center" }}>
-        <Text>Data tidak ada</Text>
-      </View>
-    )
-  }
-
-  onRefresh() {
-    this.setState({ isLoading: true })
-    this.props.refreshUserCoin(this.props.idUser)
-  }
-
+  keyExtractor = (item, index) => item.id
 
   render() {
     return(
       <View>
-        <Text>${this.state.totalPriceHolding}</Text>
-        <HeaderTableHolding />
+        <HeaderTableRates />
         <AddTransactionModal 
          modalVisible={this.state.modalVisible}
          changeTransactionStatus={this.changeTransactionStatus}
@@ -156,39 +149,30 @@ class Holding extends Component {
          saveTransaction={this.saveTransaction}
          close={this.close} />
         <FlatList
-          data={this.props.dataUserCoin}
+          data={this.props.topCoin}
           onRefresh={() => this.onRefresh()}
           refreshing={this.state.isLoading}
           renderItem={this.renderBodyTable}
           keyExtractor={this.keyExtractor}
           ListEmptyComponent={this.emptyListComponent.bind(this)}
           ListFooterComponent={this.footerComponent.bind(this)}
-        />        
-
-
-
-
-        {/* <Button title="tekan" onPress={() => this.props.navigation.navigate('DrawerOpen')} /> */}
+        />
       </View>
     )
   }
-
 }
 
 const mapStateToProps = (state) => {
   return {
     topCoin: state.CoinReducer.topCoin,
-    dataUserCoin: state.CoinReducer.dataUserCoin,
     idUser: state.UserReducer.dataUser.id
   }
 }
 
 const mapActionToProps = (dispatch) => {
   return {
-    fetchTopRates: () => dispatch(fetchTopRates()),
-    fetchUserCoin: (topCoin, idUser) => dispatch(fetchUserCoin(topCoin, idUser)),
-    refreshUserCoin: (idUser) => dispatch(refreshUserCoin(idUser))
+    fetchTopRates: () => dispatch(fetchTopRates())
   }
 }
 
-export default connect(mapStateToProps, mapActionToProps)(Holding)
+export default connect(mapStateToProps, mapActionToProps)(Rates)

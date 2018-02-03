@@ -10,26 +10,31 @@ import { connect } from 'react-redux'
 import Login from './screens/Login'
 import Register from './screens/Register'
 import Holding from './screens/Holding'
+import Setting from './screens/Setting'
+import Rates from './screens/Rates'
 
 const OpeningNav = StackNavigator({
   Login: { screen: Login },
   Register: { screen: Register }
+}, {
+  headerMode: 'none'
 })
 
 const MainNav = DrawerNavigator({
-  Holding: { screen: Holding }
+  Rates: { screen: Rates },
+  Holding: { screen: Holding },
+  Setting: { screen: Setting }
 })
 
 class Container extends Component {
   render() {
-    console.log(this.props.loginStatus)
     if(this.props.loginStatus === '' || this.props.loginStatus == 'failed') {
       return(
         <OpeningNav />
       )
     } else {
       return(
-        <Holding />
+        <MainNav />
       )
     }
   }
