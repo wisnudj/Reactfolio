@@ -38,39 +38,39 @@ class Login extends Component {
     return(
       <View style={{ backgroundColor:"#161616", flex: 1,alignItems: "center" , justifyContent: 'space-around'}}>
         <View>
-        <Text style={{ fontSize: 42, color:"#cccccc" }}>React</Text>
-        <Text style={{ fontSize: 42, color: "#cccccc" }} >Folio</Text>
+          <Text style={{ fontSize: 42, color:"#cccccc" }}>React</Text>
+          <Text style={{ fontSize: 42, color: "#cccccc" }} >Folio</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
-        <TextInput
-        style={{ width: 300, color: "#cccccc" }}
-        underlineColorAndroid={'white'}
-        placeholder="username"
-        placeholderTextColor="#cecaca"
-        onChangeText={(text) => {this.setState({ username: text })}}
-        value={this.state.username}
-        />
-        <TextInput
-        secureTextEntry={true}
-        style={{ width: 300, color: "#cccccc" }}
-        placeholder="password"
-        placeholderTextColor="#cecaca"
-        onChangeText={(text) => {this.setState({ password: text })}}
-        value={ this.state.password }
-        />
-        <Text style={{ textAlign: "center", color: "white" }}>{this.state.message}</Text>
-        <TouchableOpacity style={{ backgroundColor: "#cccccc", width:150, height: 28, justifyContent:"center" }} onPress={() => this.login()}>
-          <Text style={{ textAlign: "center", color:"black" }}>LOGIN</Text>
-        </TouchableOpacity>
+          <TextInput
+          style={{ width: 300, color: "#cccccc" }}
+          underlineColorAndroid={'white'}
+          placeholder="username"
+          placeholderTextColor="#cecaca"
+          onChangeText={(text) => {this.setState({ username: text })}}
+          value={this.state.username}
+          />
+          <TextInput
+          secureTextEntry={true}
+          style={{ width: 300, color: "#cccccc" }}
+          placeholder="password"
+          placeholderTextColor="#cecaca"
+          onChangeText={(text) => {this.setState({ password: text })}}
+          value={ this.state.password }
+          />
+          <Text style={{ textAlign: "center", color: "white" }}>{this.state.message}</Text>
+          <TouchableOpacity style={{ backgroundColor: "#cccccc", width:150, height: 28, justifyContent:"center" }} onPress={() => this.login()}>
+            <Text style={{ textAlign: "center", color:"black" }}>LOGIN</Text>
+          </TouchableOpacity>
 
-        <View>
-          <Text style={{ textAlign: "center", color: "white", marginTop: 10, marginBottom: 10 }} >or</Text>
-          <View style={{ alignItems: 'center' }}>
-            <TouchableOpacity style={{backgroundColor: "#cccccc", width:150, height: 28, justifyContent:"center"  }} onPress={() => navigate('Register')}>
-              <Text style={{textAlign: "center", color: "black" }}>Register</Text>
-            </TouchableOpacity>
+          <View>
+            <Text style={{ textAlign: "center", color: "white", marginTop: 10, marginBottom: 10 }} >or</Text>
+            <View style={{ alignItems: 'center' }}>
+              <TouchableOpacity style={{backgroundColor: "#cccccc", width:150, height: 28, justifyContent:"center"  }} onPress={() => navigate('Register')}>
+                <Text style={{textAlign: "center", color: "black" }}>Register</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
         </View>
       </View>
     )
